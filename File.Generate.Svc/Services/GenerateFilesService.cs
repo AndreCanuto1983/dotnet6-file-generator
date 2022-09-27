@@ -1,4 +1,5 @@
-﻿using Project.Generate.Svc.Interfaces;
+﻿using ClosedXML.Excel;
+using Project.Generate.Svc.Interfaces;
 using Project.Generate.Svc.Models;
 using Project.Generate.Svc.Util;
 
@@ -26,7 +27,27 @@ namespace Project.Generate.Svc.Services
                 _logger.LogError("[GenerateFilesService][GenerateExcelFile] => EXCEPTION: {ex}", ex.Message);
                 return ex.Message;
             }
+        }
 
+        public string GenerateExcelFileClosedXml(IEnumerable<Client> client, string path)
+        {
+            try
+            {
+                var dataTable = GenerateFiles.GenerateDataTable(client);
+
+                using (XLWorkbook wb = new XLWorkbook())
+                {
+                    wb.Worksheets.Add(dataTable, "Customers");
+                    wb.SaveAs(@$"{path}\Client.xlsx");
+                }
+
+                return @$"{path}\Client.xlsx";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("[GenerateFilesService][GenerateExcelFileClosedXml] => EXCEPTION: {ex}", ex.Message);
+                return ex.Message;
+            }
         }
 
         public string GenerateCsvFile(IEnumerable<Client> client, string path)
