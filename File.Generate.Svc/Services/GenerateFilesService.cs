@@ -1,5 +1,4 @@
-﻿using ClosedXML.Excel;
-using Project.Generate.Svc.Interfaces;
+﻿using Project.Generate.Svc.Interfaces;
 using Project.Generate.Svc.Models;
 using Project.Generate.Svc.Util;
 
@@ -19,12 +18,14 @@ namespace Project.Generate.Svc.Services
             try
             {
                 var dataTable = GenerateFiles.GenerateDataTable(client);
-                dataTable.SaveExcelByInterop(new FileInfo(@$"{path}\Client.xlsx"));                
+
+                dataTable.SaveExcelByInterop(new FileInfo(@$"{path}\Client.xlsx"));   
+                
                 return @$"{path}\Client.xlsx";
             }
             catch (Exception ex)
             {
-                _logger.LogError("[GenerateFilesService][GenerateExcelFile] => EXCEPTION: {ex}", ex.Message);
+                _logger.LogError("[GenerateFilesService][GenerateExcelByInterop] => EXCEPTION: {ex}", ex.Message);
                 return ex.Message;
             }
         }
@@ -41,7 +42,7 @@ namespace Project.Generate.Svc.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("[GenerateFilesService][GenerateExcelFileClosedXml] => EXCEPTION: {ex}", ex.Message);
+                _logger.LogError("[GenerateFilesService][GenerateExcelByClosedXml] => EXCEPTION: {ex}", ex.Message);
                 return ex.Message;
             }
         }
@@ -51,7 +52,9 @@ namespace Project.Generate.Svc.Services
             try
             {
                 var dataTable = GenerateFiles.GenerateDataTable(client);
+
                 dataTable.SaveCsvFile(@$"{path}\Client.csv");
+
                 return @$"{path}\Client.csv";
             }
             catch (Exception ex)

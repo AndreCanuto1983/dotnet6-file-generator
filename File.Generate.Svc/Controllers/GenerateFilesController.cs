@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Project.Generate.Svc.Interfaces;
 using Project.Generate.Svc.Models;
-using System.Numerics;
 
 namespace Project.Generate.Svc.Controllers
 {
