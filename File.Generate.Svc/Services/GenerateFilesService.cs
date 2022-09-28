@@ -14,12 +14,12 @@ namespace Project.Generate.Svc.Services
             _logger = logger;
         }
 
-        public string GenerateExcelFile(IEnumerable<Client> client, string path)
+        public string GenerateExcelByInterop(IEnumerable<Client> client, string path)
         {
             try
             {
                 var dataTable = GenerateFiles.GenerateDataTable(client);
-                dataTable.SaveExcelFile(new FileInfo(@$"{path}\Client.xlsx"));                
+                dataTable.SaveExcelByInterop(new FileInfo(@$"{path}\Client.xlsx"));                
                 return @$"{path}\Client.xlsx";
             }
             catch (Exception ex)
@@ -29,17 +29,13 @@ namespace Project.Generate.Svc.Services
             }
         }
 
-        public string GenerateExcelFileClosedXml(IEnumerable<Client> client, string path)
+        public string GenerateExcelByClosedXml(IEnumerable<Client> client, string path)
         {
             try
             {
                 var dataTable = GenerateFiles.GenerateDataTable(client);
 
-                using (XLWorkbook wb = new XLWorkbook())
-                {
-                    wb.Worksheets.Add(dataTable, "Customers");
-                    wb.SaveAs(@$"{path}\Client.xlsx");
-                }
+                dataTable.SaveExcelByClosedXml(path);
 
                 return @$"{path}\Client.xlsx";
             }

@@ -16,28 +16,34 @@ namespace Project.Generate.Svc.Controllers
             _generateFilesService = generateFilesService;
         }
 
-        [HttpPost("Excel")]
+        /// <summary>
+        /// Lib Microsoft, you need excel installed on the machine.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        [HttpPost("ExcelByInterop")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status502BadGateway)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status503ServiceUnavailable)]
-        public IActionResult GenerateExcel(List<Client> client, string path)
+        public IActionResult GenerateExcelByInterop(List<Client> client, string path)
         {
-            return Ok(_generateFilesService.GenerateExcelFile(client, path));
+            return Ok(_generateFilesService.GenerateExcelByInterop(client, path));
         }
 
-        [HttpPost("v2/Excel")]
+        [HttpPost("ExcelByClosedXml")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status502BadGateway)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status503ServiceUnavailable)]
-        public IActionResult GenerateExcelV2(List<Client> client, string path)
+        public IActionResult GenerateExcelByClosedXml(List<Client> client, string path)
         {
-            return Ok(_generateFilesService.GenerateExcelFileClosedXml(client, path));
+            return Ok(_generateFilesService.GenerateExcelByClosedXml(client, path));
         }
 
         [HttpPost("Csv")]

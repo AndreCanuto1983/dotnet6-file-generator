@@ -1,7 +1,9 @@
-﻿using Project.Generate.Svc.Models;
+﻿using ClosedXML.Excel;
+using Project.Generate.Svc.Models;
 using System.Data;
 using System.Text;
 using DataTable = System.Data.DataTable;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Project.Generate.Svc.Util
 {
@@ -52,17 +54,17 @@ namespace Project.Generate.Svc.Util
             File.WriteAllLines(strFilePath, lines, Encoding.UTF8);
         }
 
-        public static void SaveExcelFile(this DataTable dataTable, FileInfo file)
+        public static void SaveExcelByInterop(this DataTable dataTable, FileInfo file)
         {
             if (dataTable == null || dataTable.Columns.Count == 0)
                 return;
 
             DeleteFile(file);
 
-            var excelApp = new Microsoft.Office.Interop.Excel.Application();
+            var excelApp = new Excel.Application();
             excelApp.Workbooks.Add();
 
-            Microsoft.Office.Interop.Excel._Worksheet workSheet = excelApp.ActiveSheet;
+            Excel._Worksheet workSheet = excelApp.ActiveSheet;
 
             // column headings
             for (var i = 0; i < dataTable.Columns.Count; i++)
@@ -90,6 +92,17 @@ namespace Project.Generate.Svc.Util
             else
             {
                 excelApp.Visible = true;
+            }
+        }
+
+        public static void SaveExcelByClosedXml(this DataTable dataTable, string path)
+        {
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                IXLWorksheet ws = wb.Worksheets.Add(dataTable, "Client");
+                ws.Columns().AdjustToContents();
+                ws.Table(0).Theme = XLTableTheme.None;                            
+                wb.SaveAs(@$"{path}\Client.xlsx");
             }
         }
 
