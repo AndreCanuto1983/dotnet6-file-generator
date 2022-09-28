@@ -11,14 +11,21 @@ namespace Project.Generate.Svc.Util
     {
         public static DataTable GenerateDataTable(IEnumerable<Client> clientes)
         {
+            var columnsHeader = new Dictionary<string, Type>();
+            
+            columnsHeader.Add("ClientId", typeof(long));
+            columnsHeader.Add("Cpf", typeof(string));
+            columnsHeader.Add("Name", typeof(string));
+            columnsHeader.Add("Phone", typeof(string));
+            columnsHeader.Add("Email", typeof(string));
+
             var table = new DataTable();
 
-            //columns              
-            table.Columns.Add("ClientId", typeof(long));
-            table.Columns.Add("Cpf", typeof(string));
-            table.Columns.Add("Name", typeof(string));
-            table.Columns.Add("Phone", typeof(string));
-            table.Columns.Add("Email", typeof(string));
+            //columns header
+            foreach (var item in columnsHeader)
+            {
+                table.Columns.Add(item.Key, item.Value);
+            }
 
             //rows  
             foreach (var item in clientes)
@@ -97,6 +104,8 @@ namespace Project.Generate.Svc.Util
 
         public static void SaveExcelByClosedXml(this DataTable dataTable, string path)
         {
+            DeleteFile(new FileInfo(path));
+
             using (XLWorkbook wb = new XLWorkbook())
             {
                 IXLWorksheet ws = wb.Worksheets.Add(dataTable, "Client");
