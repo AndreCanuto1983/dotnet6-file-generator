@@ -115,6 +115,49 @@ namespace Project.Generate.Svc.Util
             }
         }
 
+        public static Stream SaveCsvStream(this DataTable dataTable, long count = 0)
+        {
+            var lines = new List<string>();
+
+            string[] columnNames = dataTable.Columns
+                .Cast<DataColumn>()
+                .Select(column => column.ColumnName)
+                .ToArray();
+
+            var header = string.Join(",", columnNames.Select(name => $"\"{name}\""));
+            lines.Add(header);
+
+            var valueLines = dataTable.AsEnumerable()
+                .Select(row => string.Join(",", row.ItemArray.Select(val => $"\"{val}\"")));
+
+            lines.AddRange(valueLines);
+
+            var csvBytes = Encoding.UTF8.GetBytes(string.Join(Environment.NewLine, lines));
+
+            var csvMemoryStream = new MemoryStream(csvBytes);
+
+            return csvMemoryStream;
+        }
+
+        public static Stream SaveExcelStream(this DataTable dataTable)
+        {
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                IXLWorksheet ws = wb.Worksheets.Add(dataTable, "ClienteInfo");
+                ws.Columns().AdjustToContents();
+                ws.Table(0).Theme = XLTableTheme.None;
+
+                var memoryStream = new MemoryStream();
+
+                wb.SaveAs(memoryStream);
+
+                //reseta posição do ponteiro
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                return memoryStream;
+            }
+        }
+
         public static void DeleteFile(FileInfo file)
         {
             if (file.Exists)

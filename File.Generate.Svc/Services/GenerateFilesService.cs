@@ -1,4 +1,5 @@
-﻿using Project.Generate.Svc.Interfaces;
+﻿using Project.Generate.Svc.Converter;
+using Project.Generate.Svc.Interfaces;
 using Project.Generate.Svc.Models;
 using Project.Generate.Svc.Util;
 
@@ -19,8 +20,8 @@ namespace Project.Generate.Svc.Services
             {
                 var dataTable = GenerateFiles.GenerateDataTable(client);
 
-                dataTable.SaveExcelByInterop(new FileInfo(@$"{path}\Client.xlsx"));   
-                
+                dataTable.SaveExcelByInterop(new FileInfo(@$"{path}\Client.xlsx"));
+
                 return @$"{path}\Client.xlsx";
             }
             catch (Exception ex)
@@ -47,6 +48,24 @@ namespace Project.Generate.Svc.Services
             }
         }
 
+        public FileStreamResult GenerateExcelStreamByClosedXml()
+        {
+            try
+            {
+                var dataTable = GenerateFiles.GenerateDataTable(GenerateClientList());
+
+                var result = dataTable.SaveCsvStream();
+
+                return result.Success("Client.xlsx");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("[GenerateFilesService][GenerateExcelStreamByClosedXml] => EXCEPTION: {ex}", ex.Message);
+
+                return ex.Message.Error();
+            }
+        }
+
         public string GenerateCsvFile(IEnumerable<Client> client, string path)
         {
             try
@@ -61,7 +80,46 @@ namespace Project.Generate.Svc.Services
             {
                 _logger.LogError("[GenerateFilesService][GenerateCsvFile] => EXCEPTION: {ex}", ex.Message);
                 return ex.Message;
-            }            
+            }
         }
+
+        public FileStreamResult GenerateCsvFileStream()
+        {
+            try
+            {
+                var dataTable = GenerateFiles.GenerateDataTable(GenerateClientList());
+
+                var result = dataTable.SaveExcelStream();
+
+                return result.Success("Client.csv");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("[GenerateFilesService][GenerateCsvFileStream] => EXCEPTION: {ex}", ex.Message);
+
+                return ex.Message.Error();
+            }
+        }
+
+        private static List<Client> GenerateClientList()
+        => new()
+            {
+                new Client()
+                {
+                    ClientId = 1,
+                    Cpf = "333.222.111-99",
+                    Name = "André",
+                    Phone = "(11)99999-8855",
+                    Email = "andrecanuto@test.com"
+                },
+                new Client()
+                {
+                    ClientId = 2,
+                    Cpf = "113.222.111-49",
+                    Name = "Miguel",
+                    Phone = "(11)99999-9900",
+                    Email = "miguel@test.com"
+                }
+            };
     }
 }
