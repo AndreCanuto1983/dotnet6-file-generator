@@ -47,11 +47,11 @@ namespace Project.Generate.Svc.Controllers
 
         /// <summary>
         /// Example of how to download the file via javascript
-        /// window.open('http://localhost:5000/api/GenerateFiles/ExcelStreamFileByClosedXml', "_blank");
+        /// window.open('http://localhost:5000/api/GenerateFiles/ExcelFileByClosedXmlStream', "_blank");
         /// </summary>
         /// <param name="client"></param>
         /// <returns></returns>
-        [HttpGet("ExcelStreamFileByClosedXml")]
+        [HttpGet("ExcelFileByClosedXmlStream")]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status401Unauthorized)]

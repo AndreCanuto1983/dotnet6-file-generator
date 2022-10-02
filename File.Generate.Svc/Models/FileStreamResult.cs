@@ -1,6 +1,6 @@
 ﻿namespace Project.Generate.Svc.Models
 {
-    public class FileStreamResult
+    public class FileResult
     {
         public bool Success { get; set; }
         public string Message { get; set; }

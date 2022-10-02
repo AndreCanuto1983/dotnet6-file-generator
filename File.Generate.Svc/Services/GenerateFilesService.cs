@@ -48,14 +48,14 @@ namespace Project.Generate.Svc.Services
             }
         }
 
-        public FileStreamResult GenerateExcelStreamByClosedXml()
+        public FileResult GenerateExcelStreamByClosedXml()
         {
             try
             {
                 var dataTable = GenerateFiles.GenerateDataTable(GenerateClientList());
 
-                var result = dataTable.SaveCsvStream();
-
+                var result = dataTable.SaveExcelStream();
+                
                 return result.Success("Client.xlsx");
             }
             catch (Exception ex)
@@ -83,13 +83,13 @@ namespace Project.Generate.Svc.Services
             }
         }
 
-        public FileStreamResult GenerateCsvFileStream()
+        public FileResult GenerateCsvFileStream()
         {
             try
             {
                 var dataTable = GenerateFiles.GenerateDataTable(GenerateClientList());
 
-                var result = dataTable.SaveExcelStream();
+                var result = dataTable.SaveCsvStream();
 
                 return result.Success("Client.csv");
             }

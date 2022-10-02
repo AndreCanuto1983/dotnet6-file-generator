@@ -6,8 +6,8 @@ namespace Project.Generate.Svc.Interfaces
     {
         string GenerateExcelByInterop(IEnumerable<Client> client, string path);
         string GenerateExcelByClosedXml(IEnumerable<Client> client, string path);
-        FileStreamResult GenerateExcelStreamByClosedXml();
+        FileResult GenerateExcelStreamByClosedXml();
         string GenerateCsvFile(IEnumerable<Client> client, string path);
-        FileStreamResult GenerateCsvFileStream();
+        FileResult GenerateCsvFileStream();
     }
 }

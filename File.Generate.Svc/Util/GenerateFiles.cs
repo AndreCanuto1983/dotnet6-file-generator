@@ -12,7 +12,7 @@ namespace Project.Generate.Svc.Util
         public static DataTable GenerateDataTable(IEnumerable<Client> clientes)
         {
             var columnsHeader = new Dictionary<string, Type>();
-            
+
             columnsHeader.Add("ClientId", typeof(long));
             columnsHeader.Add("Cpf", typeof(string));
             columnsHeader.Add("Name", typeof(string));
@@ -21,19 +21,17 @@ namespace Project.Generate.Svc.Util
 
             var table = new DataTable();
 
-            //columns header
             foreach (var item in columnsHeader)
             {
                 table.Columns.Add(item.Key, item.Value);
             }
 
-            //rows  
             foreach (var item in clientes)
             {
                 table.Rows.Add(
                     item.ClientId,
                     item.Cpf,
-                    item.Name,
+                    Encoding.UTF8.GetString(Encoding.Default.GetBytes(item.Name)),
                     item.Phone,
                     item.Email);
             }
@@ -73,16 +71,13 @@ namespace Project.Generate.Svc.Util
 
             Excel._Worksheet workSheet = excelApp.ActiveSheet;
 
-            // column headings
             for (var i = 0; i < dataTable.Columns.Count; i++)
             {
                 workSheet.Cells[1, i + 1] = dataTable.Columns[i].ColumnName;
             }
 
-            // rows
             for (var i = 0; i < dataTable.Rows.Count; i++)
             {
-                // to do: format datetime values before printing
                 for (var j = 0; j < dataTable.Columns.Count; j++)
                 {
                     workSheet.Cells[i + 2, j + 1] = dataTable.Rows[i][j];
@@ -106,16 +101,14 @@ namespace Project.Generate.Svc.Util
         {
             DeleteFile(new FileInfo(path));
 
-            using (XLWorkbook wb = new XLWorkbook())
-            {
-                IXLWorksheet ws = wb.Worksheets.Add(dataTable, "Client");
-                ws.Columns().AdjustToContents();
-                ws.Table(0).Theme = XLTableTheme.None;                            
-                wb.SaveAs(@$"{path}\Client.xlsx");
-            }
+            using var wb = new XLWorkbook();
+            IXLWorksheet ws = wb.Worksheets.Add(dataTable, "Client");
+            ws.Columns().AdjustToContents();
+            ws.Table(0).Theme = XLTableTheme.None;
+            wb.SaveAs(@$"{path}\Client.xlsx");
         }
 
-        public static Stream SaveCsvStream(this DataTable dataTable, long count = 0)
+        public static Stream SaveCsvStream(this DataTable dataTable)
         {
             var lines = new List<string>();
 
@@ -140,22 +133,23 @@ namespace Project.Generate.Svc.Util
         }
 
         public static Stream SaveExcelStream(this DataTable dataTable)
-        {
-            using (XLWorkbook wb = new XLWorkbook())
-            {
-                IXLWorksheet ws = wb.Worksheets.Add(dataTable, "ClienteInfo");
-                ws.Columns().AdjustToContents();
-                ws.Table(0).Theme = XLTableTheme.None;
+        {   
+            using var wb = new XLWorkbook();
+            
+            IXLWorksheet ws = wb.Worksheets.Add(dataTable, "ClienteInfo");
+            
+            ws.Columns().AdjustToContents();
 
-                var memoryStream = new MemoryStream();
+            ws.Table(0).Theme = XLTableTheme.None;                      
+                
+            var memoryStream = new MemoryStream();                      
 
-                wb.SaveAs(memoryStream);
+            wb.SaveAs(memoryStream);
 
-                //reseta posição do ponteiro
-                memoryStream.Seek(0, SeekOrigin.Begin);
+            //reset pointer position so the file is not inverted
+            memoryStream.Seek(0, SeekOrigin.Begin);                            
 
-                return memoryStream;
-            }
+            return memoryStream;
         }
 
         public static void DeleteFile(FileInfo file)

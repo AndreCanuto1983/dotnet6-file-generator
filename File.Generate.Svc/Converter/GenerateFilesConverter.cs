@@ -4,7 +4,7 @@ namespace Project.Generate.Svc.Converter
 {
     public static class GenerateFilesConverter
     {
-        public static FileStreamResult Success(this Stream fileStream, string name)
+        public static FileResult Success(this Stream fileStream, string name)
             => new()
             {
                 Success = true,
@@ -12,7 +12,7 @@ namespace Project.Generate.Svc.Converter
                 Name = name
             };
 
-        public static FileStreamResult Error(this string message)
+        public static FileResult Error(this string message)
             => new()
             {
                 Success = false,                
