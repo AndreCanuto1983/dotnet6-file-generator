@@ -14,37 +14,33 @@ namespace Project.Generate.Svc.Services
             _logger = logger;
         }
 
-        public string GenerateExcelByInterop(IEnumerable<Client> client, string path)
+        public void GenerateExcelByInterop(IEnumerable<Client> client)
         {
             try
             {
                 var dataTable = GenerateFiles.GenerateDataTable(client);
 
-                dataTable.SaveExcelByInterop(new FileInfo(@$"{path}\Client.xlsx"));
-
-                return @$"{path}\Client.xlsx";
+                dataTable.SaveExcelByInterop();
             }
             catch (Exception ex)
             {
                 _logger.LogError("[GenerateFilesService][GenerateExcelByInterop] => EXCEPTION: {ex}", ex.Message);
-                return ex.Message;
+                throw;
             }
         }
 
-        public string GenerateExcelByClosedXml(IEnumerable<Client> client, string path)
+        public void GenerateExcelByClosedXml(IEnumerable<Client> client)
         {
             try
             {
                 var dataTable = GenerateFiles.GenerateDataTable(client);
 
-                dataTable.SaveExcelByClosedXml(path);
-
-                return @$"{path}\Client.xlsx";
+                dataTable.SaveExcelByClosedXml();
             }
             catch (Exception ex)
             {
                 _logger.LogError("[GenerateFilesService][GenerateExcelByClosedXml] => EXCEPTION: {ex}", ex.Message);
-                return ex.Message;
+                throw;
             }
         }
 
@@ -66,20 +62,18 @@ namespace Project.Generate.Svc.Services
             }
         }
 
-        public string GenerateCsvFile(IEnumerable<Client> client, string path)
+        public void GenerateCsvFile(IEnumerable<Client> client)
         {
             try
             {
                 var dataTable = GenerateFiles.GenerateDataTable(client);
 
-                dataTable.SaveCsvFile(@$"{path}\Client.csv");
-
-                return @$"{path}\Client.csv";
+                dataTable.SaveCsvFile();
             }
             catch (Exception ex)
             {
                 _logger.LogError("[GenerateFilesService][GenerateCsvFile] => EXCEPTION: {ex}", ex.Message);
-                return ex.Message;
+                throw;
             }
         }
 

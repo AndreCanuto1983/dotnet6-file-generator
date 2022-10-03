@@ -39,8 +39,10 @@ namespace Project.Generate.Svc.Util
             return table;
         }
 
-        public static void SaveCsvFile(this DataTable dataTable, string strFilePath)
+        public static void SaveCsvFile(this DataTable dataTable)
         {
+            var path = GetDiretory();
+
             var lines = new List<string>();
 
             string[] columnNames = dataTable.Columns
@@ -56,15 +58,15 @@ namespace Project.Generate.Svc.Util
 
             lines.AddRange(valueLines);
 
-            File.WriteAllLines(strFilePath, lines, Encoding.UTF8);
+            File.WriteAllLines(@$"{path}\Client{DateTime.Now.ToString("ddMMyyyyHHmmss")}.csv", lines, Encoding.UTF8);
         }
 
-        public static void SaveExcelByInterop(this DataTable dataTable, FileInfo file)
+        public static void SaveExcelByInterop(this DataTable dataTable)
         {
             if (dataTable == null || dataTable.Columns.Count == 0)
                 return;
 
-            DeleteFile(file);
+            var path = GetDiretory();
 
             var excelApp = new Excel.Application();
             excelApp.Workbooks.Add();
@@ -86,26 +88,23 @@ namespace Project.Generate.Svc.Util
 
             excelApp.Columns.AutoFit();
 
-            if (!string.IsNullOrEmpty(file.FullName))
+            if (!string.IsNullOrEmpty(path))
             {
-                workSheet.SaveAs(file.FullName);
+                workSheet.SaveAs(@$"{path}\Client{DateTime.Now.ToString("ddMMyyyyHHmmss")}.xlsx");
                 excelApp.Quit();
             }
             else
-            {
                 excelApp.Visible = true;
-            }
         }
 
-        public static void SaveExcelByClosedXml(this DataTable dataTable, string path)
+        public static void SaveExcelByClosedXml(this DataTable dataTable)
         {
-            DeleteFile(new FileInfo(path));
-
+            var path = GetDiretory();
             using var wb = new XLWorkbook();
             IXLWorksheet ws = wb.Worksheets.Add(dataTable, "Client");
             ws.Columns().AdjustToContents();
             ws.Table(0).Theme = XLTableTheme.None;
-            wb.SaveAs(@$"{path}\Client.xlsx");
+            wb.SaveAs(@$"{path}\Client{DateTime.Now.ToString("ddMMyyyyHHmmss")}.xlsx");
         }
 
         public static Stream SaveCsvStream(this DataTable dataTable)
@@ -133,21 +132,21 @@ namespace Project.Generate.Svc.Util
         }
 
         public static Stream SaveExcelStream(this DataTable dataTable)
-        {   
+        {
             using var wb = new XLWorkbook();
-            
-            IXLWorksheet ws = wb.Worksheets.Add(dataTable, "ClienteInfo");
-            
+
+            IXLWorksheet ws = wb.Worksheets.Add(dataTable, "Client");
+
             ws.Columns().AdjustToContents();
 
-            ws.Table(0).Theme = XLTableTheme.None;                      
-                
-            var memoryStream = new MemoryStream();                      
+            ws.Table(0).Theme = XLTableTheme.None;
+
+            var memoryStream = new MemoryStream();
 
             wb.SaveAs(memoryStream);
 
             //reset pointer position so the file is not inverted
-            memoryStream.Seek(0, SeekOrigin.Begin);                            
+            memoryStream.Seek(0, SeekOrigin.Begin);
 
             return memoryStream;
         }
@@ -156,6 +155,23 @@ namespace Project.Generate.Svc.Util
         {
             if (file.Exists)
                 file.Delete();
+        }
+
+        public static void DeleteAllFiles()
+        {
+            Directory.Delete(GetDiretory(), true);
+        }
+
+        public static string GetDiretory()
+        {
+            var path = new FileInfo(@"\Files");
+
+            var currentDirectory = Directory.GetCurrentDirectory() + path;
+
+            if (!Directory.Exists(currentDirectory))
+                Directory.CreateDirectory(currentDirectory);
+
+            return currentDirectory;
         }
     }
 }

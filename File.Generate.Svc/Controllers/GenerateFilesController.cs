@@ -28,9 +28,11 @@ namespace Project.Generate.Svc.Controllers
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status502BadGateway)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status503ServiceUnavailable)]
-        public IActionResult GenerateExcelByInterop(List<Client> client, string path)
+        public IActionResult GenerateExcelByInterop(List<Client> client)
         {
-            return Ok(_generateFilesService.GenerateExcelByInterop(client, path));
+            _generateFilesService.GenerateExcelByInterop(client);
+
+            return Ok();
         }
 
         [HttpPost("ExcelByClosedXml")]
@@ -40,9 +42,11 @@ namespace Project.Generate.Svc.Controllers
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status502BadGateway)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status503ServiceUnavailable)]
-        public IActionResult GenerateExcelByClosedXml(List<Client> client, string path)
+        public IActionResult GenerateExcelByClosedXml(List<Client> client)
         {
-            return Ok(_generateFilesService.GenerateExcelByClosedXml(client, path));
+            _generateFilesService.GenerateExcelByClosedXml(client);
+
+            return Ok();
         }
 
         /// <summary>
@@ -72,9 +76,10 @@ namespace Project.Generate.Svc.Controllers
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status502BadGateway)]
         [ProducesResponseType(typeof(IActionResult), StatusCodes.Status503ServiceUnavailable)]
-        public IActionResult GenerateCsv(List<Client> client, string path)
+        public IActionResult GenerateCsv(List<Client> client)
         {
-            return Ok(_generateFilesService.GenerateCsvFile(client, path));
+            _generateFilesService.GenerateCsvFile(client);
+            return Ok();
         }
 
         /// <summary>
